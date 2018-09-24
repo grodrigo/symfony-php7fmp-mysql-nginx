@@ -1,0 +1,59 @@
+version: "3"
+services:
+
+#    redis:
+#      image: redis:alpine
+#      container_name: symfonyapp-redis
+
+    db:
+      image: mariadb:${MARIADB_VERSION}
+#      working_dir: /application
+      volumes:
+        - "./.data/db:/var/lib/mysql"
+      environment:
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        - MYSQL_DATABASE=${MYSQL_DATABASE}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      ports:
+        - "${MYSQL_HOST_PORT}:3306"
+
+    elasticsearch:
+        image: elasticsearch:5.4-alpine
+
+    php:
+      build:
+          context: config/php7-fpm
+          args:
+              TIMEZONE: ${TIMEZONE}
+              WORKDIR: ${SYMFONY_WORKING_DIR}
+#      working_dir: ${SYMFONY_WORKING_DIR}
+      volumes:
+        - ${SYMFONY_APP_PATH}:${SYMFONY_WORKING_DIR}
+#        - ./config/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
+        - ./logs/symfony:${SYMFONY_WORKING_DIR}/var/logs
+      depends_on:
+        - db
+    nginx:
+      build: config/nginx
+#      image: nginx:${NGINX_VERSION}
+      working_dir: ${SYMFONY_WORKING_DIR}
+      volumes:
+          - ${SYMFONY_APP_PATH}:${SYMFONY_WORKING_DIR}
+          - ./logs/nginx/:/var/log/nginx
+#          - ./config/nginx/site.conf:/etc/nginx/conf.d/default.conf
+      ports:
+          - "${NGINX_HOST_PORT}:80"
+      depends_on:
+          - php
+
+    elk:
+        image: willdurand/elk
+        ports:
+            - 81:80
+        volumes:
+            - ./config/elk/logstash:/etc/logstash
+            - ./config/elk/logstash/patterns:/opt/logstash/patterns
+            - ${SYMFONY_APP_PATH}:${SYMFONY_WORKING_DIR}
+            - ./logs/nginx/:/var/log/nginx
+            - ./logs/symfony:${SYMFONY_WORKING_DIR}/var/logs
