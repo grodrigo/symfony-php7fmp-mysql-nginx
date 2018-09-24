@@ -7,6 +7,7 @@ Enjoy it
 
 **USE:**
 Clone this repo to a folder and create an application folder on it. Then, in the application folder clone your project.
+(change the app folder if you want in the .env file)
 copy .env.dist to .env and change it the way you like it.
 ```cp .env.dist .env
 
