@@ -6,9 +6,12 @@ ARG WORKDIR
 MAINTAINER Maxence POUTORD <maxence.poutord@gmail.com>
 
 RUN apt-get update && apt-get install -y \
-    openssl \
-    git \
-    unzip
+     optipng \
+     jpegoptim \
+     gnupg
+#    openssl \
+#    git \
+#    unzip
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -38,4 +41,15 @@ RUN echo "xdebug.remote_port=9001" >> /usr/local/etc/php/conf.d/docker-php-ext-x
 RUN echo 'alias sf="php app/console"' >> ~/.bashrc
 RUN echo 'alias sf3="php bin/console"' >> ~/.bashrc
 
+
 WORKDIR ${WORKDIR}
+
+
+RUN composer update
+#RUN doctrine:database:create
+#RUN sf3 doctrine:schema:create
+
+#NODE
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN apt-get install -y nodejs
+RUN sf3 assetic:dump
