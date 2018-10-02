@@ -17,6 +17,7 @@ services:
       build:
           context: config/php7-fpm
           args:
+              SRC: ${SYMFONY_APP_PATH}
               TIMEZONE: ${TIMEZONE}
               WORKDIR: ${SYMFONY_WORKING_DIR}
               COMPOSER_ALLOW_SUPERUSER: 1
