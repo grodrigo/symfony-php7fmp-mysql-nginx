@@ -10,10 +10,10 @@ MAINTAINER Maxence POUTORD <maxence.poutord@gmail.com>
 RUN apt-get update && apt-get install -y \
      optipng \
      jpegoptim \
-     gnupg
-#    openssl \
-#    git \
-#    unzip
+     gnupg \
+     openssl \
+     git \
+     unzip
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -43,7 +43,7 @@ RUN echo "xdebug.remote_port=9001" >> /usr/local/etc/php/conf.d/docker-php-ext-x
 RUN echo 'alias sf="php app/console"' >> ~/.bashrc
 RUN echo 'alias sf3="php bin/console"' >> ~/.bashrc
 
-ADD SRC ${WORKDIR}
+COPY ${SRC} ${WORKDIR}
 WORKDIR ${WORKDIR}
 
 

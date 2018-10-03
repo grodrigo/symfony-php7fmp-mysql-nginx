@@ -15,18 +15,19 @@ services:
 
     php:
       build:
-          context: config/php7-fpm
+          context: .
           args:
               SRC: ${SYMFONY_APP_PATH}
               TIMEZONE: ${TIMEZONE}
               WORKDIR: ${SYMFONY_WORKING_DIR}
               COMPOSER_ALLOW_SUPERUSER: 1
-      working_dir: ${SYMFONY_WORKING_DIR}
+#      working_dir: ${SYMFONY_WORKING_DIR}
       environment:
         - COMPOSER_ALLOW_SUPERUSER=1
       volumes:
         - ${SYMFONY_APP_PATH}:${SYMFONY_WORKING_DIR}
         - ./logs/symfony:${SYMFONY_WORKING_DIR}/var/logs
+        - ./php.ini-development:/usr/local/etc/php/php.ini
       depends_on:
         - db
 
